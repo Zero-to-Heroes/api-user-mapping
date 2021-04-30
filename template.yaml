@@ -52,7 +52,7 @@ Resources:
             Runtime: nodejs10.x
             CodeUri: ./dist/process-save-mapping
             MemorySize: 128
-            ReservedConcurrentExecutions: 5
+            ReservedConcurrentExecutions: 1
             Policies:
                 - AWSLambdaVPCAccessExecutionRole
                 - SecretsManagerReadWrite
