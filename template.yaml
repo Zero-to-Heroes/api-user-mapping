@@ -27,7 +27,7 @@ Resources:
         Type: AWS::Serverless::Function
         Properties:
             Handler: start-save-mapping.default
-            Runtime: nodejs10.x
+            Runtime: nodejs12.x
             Timeout: 3
             MemorySize: 128
             CodeUri: ./dist/start-save-mapping
@@ -49,7 +49,7 @@ Resources:
         Type: AWS::Serverless::Function
         Properties:
             Handler: process-save-mapping.default
-            Runtime: nodejs10.x
+            Runtime: nodejs12.x
             CodeUri: ./dist/process-save-mapping
             MemorySize: 128
             ReservedConcurrentExecutions: 1
