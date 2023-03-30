@@ -25,9 +25,17 @@ export default async (event, context): Promise<any> => {
 
 const processEvent = async (input: Input, mysql: ServerlessMysql) => {
 	const escape = SqlString.escape;
-	const query = `
+	const insertQuery = `
 		INSERT IGNORE INTO user_mapping (userId, userName)
 		VALUES (${escape(input.userId)}, ${escape(input.userName)})
 	`;
-	await mysql.query(query);
+	await mysql.query(insertQuery);
+	if (!!input.userName?.length) {
+		const updateQuery = `
+			UPDATE user_mapping 
+			SET isPremium = ${escape(input.isPremium)}
+			WHERE userName = ${escape(input.userName)}
+			`;
+		await mysql.query(updateQuery);
+	}
 };
