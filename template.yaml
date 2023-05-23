@@ -45,6 +45,25 @@ Resources:
                     Properties:
                         Path: /save/{proxy+}
                         Method: any
+    StartSaveMappingFunction2:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: start-save-mapping.default
+            Runtime: nodejs16.x
+            CodeUri: ./dist/start-save-mapping
+            Timeout: 3
+            MemorySize: 128
+            Policies:
+                - AWSLambdaVPCAccessExecutionRole
+                - AmazonSESFullAccess
+                - AmazonSQSFullAccess
+                - SecretsManagerReadWrite
+                - arn:aws:iam::478062583808:policy/CloudWatchPolicyForLambda # See https://stackoverflow.com/questions/51166504/disable-cloudwatch-to-monitor-logs-for-lambda-function
+            Tags:
+                LambdaName: api-start-save-mapping-2
+            AutoPublishAlias: live
+            FunctionUrlConfig:
+                AuthType: NONE
     ProcessSaveMappingFunction:
         Type: AWS::Serverless::Function
         Properties:

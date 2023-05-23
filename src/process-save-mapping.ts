@@ -30,7 +30,7 @@ const processEvent = async (input: Input, mysql: ServerlessMysql) => {
 		VALUES (${escape(input.userId)}, ${escape(input.userName)})
 	`;
 	await mysql.query(insertQuery);
-	if (!!input.userName?.length) {
+	if (input.userName?.length) {
 		const updateQuery = `
 			UPDATE user_mapping 
 			SET isPremium = ${escape(input.isPremium)}
