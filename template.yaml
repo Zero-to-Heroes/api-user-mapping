@@ -5,13 +5,6 @@ Transform: AWS::Serverless-2016-10-31
 Description: API endpoint for user mapping
 
 Globals:
-    Api:
-        # API Gateway regional endpoints
-        EndpointConfiguration: EDGE
-        Cors:
-            AllowMethods: "'*'"
-            AllowHeaders: "'*'"
-            AllowOrigin: "'*'"
     Function:
         Environment:
             Variables:
@@ -23,28 +16,6 @@ Resources:
         Properties:
             QueueName: deferred-save-mapping-queue
             VisibilityTimeout: 601
-    StartSaveMappingFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            Handler: start-save-mapping.default
-            Runtime: nodejs16.x
-            Timeout: 3
-            MemorySize: 128
-            CodeUri: ./dist/start-save-mapping
-            Policies:
-                - AWSLambdaVPCAccessExecutionRole
-                - AmazonSESFullAccess
-                - AmazonSQSFullAccess
-                - SecretsManagerReadWrite
-                - arn:aws:iam::478062583808:policy/CloudWatchPolicyForLambda # See https://stackoverflow.com/questions/51166504/disable-cloudwatch-to-monitor-logs-for-lambda-function
-            Tags:
-                LambdaName: api-start-save-mapping
-            Events:
-                SaveMappingResource:
-                    Type: Api
-                    Properties:
-                        Path: /save/{proxy+}
-                        Method: any
     StartSaveMappingFunction2:
         Type: AWS::Serverless::Function
         Properties:
@@ -53,12 +24,15 @@ Resources:
             CodeUri: ./dist/start-save-mapping
             Timeout: 3
             MemorySize: 128
+            Layers:
+                - !Sub "arn:aws:lambda:${AWS::Region}:580247275435:layer:LambdaInsightsExtension:14"
             Policies:
                 - AWSLambdaVPCAccessExecutionRole
                 - AmazonSESFullAccess
                 - AmazonSQSFullAccess
                 - SecretsManagerReadWrite
-                - arn:aws:iam::478062583808:policy/CloudWatchPolicyForLambda # See https://stackoverflow.com/questions/51166504/disable-cloudwatch-to-monitor-logs-for-lambda-function
+                - arn:aws:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy
+                # - arn:aws:iam::478062583808:policy/CloudWatchPolicyForLambda # See https://stackoverflow.com/questions/51166504/disable-cloudwatch-to-monitor-logs-for-lambda-function
             Tags:
                 LambdaName: api-start-save-mapping-2
             AutoPublishAlias: live
@@ -72,11 +46,14 @@ Resources:
             CodeUri: ./dist/process-save-mapping
             MemorySize: 128
             ReservedConcurrentExecutions: 1
+            Layers:
+                - !Sub "arn:aws:lambda:${AWS::Region}:580247275435:layer:LambdaInsightsExtension:14"
             Policies:
                 - AWSLambdaVPCAccessExecutionRole
                 - SecretsManagerReadWrite
                 - AmazonSESFullAccess
                 - AmazonSQSFullAccess
+                - arn:aws:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy
                 # - arn:aws:iam::478062583808:policy/CloudWatchPolicyForLambda # See https://stackoverflow.com/questions/51166504/disable-cloudwatch-to-monitor-logs-for-lambda-function
             Tags:
                 LambdaName: process-save-mapping
@@ -87,10 +64,3 @@ Resources:
                     Properties:
                         Queue: !GetAtt SaveMappingQueue.Arn
                         # BatchSize: 1
-
-Outputs:
-    SaveUserMappingApi:
-        Description: URL to save mapping
-        Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/usermapping'
-        Export:
-            Name: SaveMappingApi
