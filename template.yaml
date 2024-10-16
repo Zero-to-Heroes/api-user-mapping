@@ -63,4 +63,5 @@ Resources:
                     Type: SQS
                     Properties:
                         Queue: !GetAtt SaveMappingQueue.Arn
-                        # BatchSize: 1
+                        BatchSize: 60
+                        MaximumBatchingWindowInSeconds: 60
