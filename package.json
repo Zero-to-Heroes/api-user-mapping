@@ -14,6 +14,7 @@
 	"license": "MIT",
 	"private": true,
 	"dependencies": {
+		"@firestone-hs/aws-lambda-utils": "^1.0.7",
 		"@firestone-hs/reference-data": "^0.1.83",
 		"aws-sdk": "^2.1040.0",
 		"mysql": "^2.18.1",
